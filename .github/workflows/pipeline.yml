@@ -1,0 +1,47 @@
+name: Airbnb ETL & Analytics Pipeline
+
+on:
+  repository_dispatch:
+    types: [trigger_pipeline]
+  workflow_dispatch:  # Supports manual trigger via GitHub UI
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Test Suite
+        env:
+          PYTHONPATH: .
+        run: |
+          pytest
+
+      - name: Execute Ingestion, Modeling & Analytics
+        env:
+          PYTHONPATH: .
+        run: |
+          python src/main.py
+
+      - name: Archive Production Database and Analytical Assets
+        uses: actions/upload-artifact@v3
+        with:
+          name: airbnb-pipeline-outputs
+          path: |
+            data/gold/analytics_report.md
+            data/gold/plots/
+            data/gold/airbnb_dw.duckdb
+          retention-days: 7

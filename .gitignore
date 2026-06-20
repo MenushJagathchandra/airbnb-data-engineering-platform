@@ -1,0 +1,33 @@
+# Data directories (populated at runtime)
+data/raw/
+data/cleaned/
+data/gold/airbnb_dw.duckdb
+data/gold/test_airbnb_dw.duckdb
+
+# Keep report and plots
+!data/gold/Menush_Expernetic_Report.docx
+!data/gold/plots/
+!data/gold/analytics_report.md
+
+# Python virtual environment
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest
+.pytest_cache/
+
+# DuckDB lock files
+*.duckdb.wal
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+

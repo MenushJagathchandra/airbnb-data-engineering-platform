@@ -1,0 +1,11 @@
+services:
+  pipeline:
+    build: .
+    container_name: airbnb_pipeline
+    user: "1000:1000"
+    volumes:
+      - ./data:/app/data:z
+    environment:
+      - PIPELINE_MODE=PRODUCTION
+    # To run tests instead of the main script, the user can override the command:
+    # docker-compose run pipeline pytest

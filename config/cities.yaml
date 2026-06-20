@@ -1,0 +1,36 @@
+cities:
+  - name: "amsterdam"
+    country: "the-netherlands"
+    state: "north-holland"
+    scrape_date: "2025-09-11"
+    urls:
+      listings: "https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/2025-09-11/data/listings.csv.gz"
+      calendar: "https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/2025-09-11/data/calendar.csv.gz"
+      reviews: "https://data.insideairbnb.com/the-netherlands/north-holland/amsterdam/2025-09-11/data/reviews.csv.gz"
+    landmarks:
+      - name: "Amsterdam Centraal Station"
+        latitude: 52.3791
+        longitude: 4.9003
+        type: "transit_hub"
+      - name: "Dam Square"
+        latitude: 52.3731
+        longitude: 4.8906
+        type: "historic_center"
+
+  - name: "venice"
+    country: "italy"
+    state: "veneto"
+    scrape_date: "2025-09-11"
+    urls:
+      listings: "https://data.insideairbnb.com/italy/veneto/venice/2025-09-11/data/listings.csv.gz"
+      calendar: "https://data.insideairbnb.com/italy/veneto/venice/2025-09-11/data/calendar.csv.gz"
+      reviews: "https://data.insideairbnb.com/italy/veneto/venice/2025-09-11/data/reviews.csv.gz"
+    landmarks:
+      - name: "St. Mark's Square"
+        latitude: 45.4344
+        longitude: 12.3388
+        type: "historic_center"
+      - name: "Rialto Bridge"
+        latitude: 45.4380
+        longitude: 12.3359
+        type: "infrastructure"
