@@ -1,6 +1,6 @@
-# Menush Project — 10-Minute Video Script
+# Industrial-Grade Airbnb ETL Pipeline — 10-Minute Video Script
 
-**Title**: Menush: Industrial-Grade Airbnb ETL Pipeline | Data Engineering Demo  
+**Title**: Industrial-Grade Airbnb ETL Pipeline | Data Engineering Demo  
 **Duration**: ~10 minutes  
 **Audience**: Technical and non-technical stakeholders  
 **Tone**: Professional, confident, clear  
@@ -9,10 +9,10 @@
 
 ## [0:00 - 1:00] INTRO & PROBLEM STATEMENT
 
-**[VISUAL]**: Title card with project name "Menush" and subtitle "Airbnb ETL & Analytics Pipeline". Show Airbnb logo and Inside Airbnb data source.
+**[VISUAL]**: Title card with project name "Airbnb ETL & Analytics Pipeline" and subtitle "Data Engineering Demo". Show Airbnb logo and Inside Airbnb data source.
 
 **[NARRATION]**:
-"Hi, I'm Sathush, and today I'm going to walk you through Menush — a production-grade data engineering pipeline I built to transform raw Airbnb data into actionable business intelligence.
+"Hi, I'm Sathush, and today I'm going to walk you through a production-grade data engineering pipeline I built to transform raw Airbnb data into actionable business intelligence.
 
 The problem I solved: Inside Airbnb publishes massive CSV files — millions of rows of listings, calendars, and reviews — but this data is messy, inconsistent, and impossible to analyze directly. Companies and researchers need clean, structured data to make decisions about pricing, location, and market trends.
 
@@ -29,7 +29,7 @@ My solution: An automated pipeline that ingests raw data, cleans it, builds a da
 4. **Analyze** → Chart icon + "Statistics + Sentiment + Reports"
 
 **[NARRATION]**:
-"Menush follows a four-stage architecture:
+"This pipeline follows a four-stage architecture:
 
 **Stage 1: Ingestion**. The pipeline downloads gzipped CSV files from Inside Airbnb for multiple cities — currently Amsterdam and Venice. It uses chunked streaming with exponential backoff retries, so even if the network hiccups, it recovers gracefully. If files already exist, it skips the download — idempotent and efficient.
 
@@ -141,7 +141,7 @@ Thanks for watching — I'm happy to take questions."
 ## [9:45 - 10:00] OUTRO
 
 **[VISUAL]**: End card with:
-- Project name: Menush
+- Project name: Airbnb ETL & Analytics Pipeline
 - GitHub repo link (placeholder)
 - LinkedIn/contact info (placeholder)
 - "Built for Expernetic Talent Assessment Program"
@@ -198,7 +198,7 @@ Thanks for watching — I'm happy to take questions."
 If you need a shorter version for LinkedIn or Twitter:
 
 **[0:00 - 0:30]**: Problem + Solution  
-"Inside Airbnb data is messy and impossible to analyze directly. I built Menush — an automated pipeline that cleans, models, and analyzes millions of rows in 10 minutes."
+"Inside Airbnb data is messy and impossible to analyze directly. I built an automated pipeline that cleans, models, and analyzes millions of rows in 10 minutes."
 
 **[0:30 - 1:30]**: Key Findings (2-3 bullets with charts)  
 "Venice listings near St. Mark's Square command a 2.3x price premium. Superhosts rate 0.8 standard deviations higher. Entire homes cost 3x more than private rooms."

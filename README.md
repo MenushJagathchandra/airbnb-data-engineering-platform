@@ -1,9 +1,9 @@
-# Menush: Industrial-Grade Airbnb ETL & Dimensional Warehousing Pipeline
+# Industrial-Grade Airbnb ETL & Dimensional Warehousing Pipeline
 **Expernetic Talent Assessment Program — Production-Grade Data Engineering Blueprint**
 
 **Author**: Menush Jagathchandra | **GitHub**: [@MenushJagathchandra](https://github.com/MenushJagathchandra)
 
-Menush is a configuration-driven, event-triggered, and fully containerized data engineering pipeline. It ingests, standardizes, models, and analyzes millions of rows of Inside Airbnb data for multiple cities (currently targeting Amsterdam and Venice). It compiles the processed data into a DuckDB Star Schema Data Warehouse and runs statistical modeling (ANOVA, Cohen's d, distance gradients) and lexicon-based sentiment analysis on customer reviews.
+This pipeline is a configuration-driven, event-triggered, and fully containerized data engineering pipeline. It ingests, standardizes, models, and analyzes millions of rows of Inside Airbnb data for multiple cities (currently targeting Amsterdam and Venice). It compiles the processed data into a DuckDB Star Schema Data Warehouse and runs statistical modeling (ANOVA, Cohen's d, distance gradients) and lexicon-based sentiment analysis on customer reviews.
 
 ---
 
@@ -143,7 +143,7 @@ The warehouse is designed to maintain structural integrity while optimizing quer
 ```
 
 ### Key Engineering Guardrails
-1. **Composite Hashing for Surrogate Keys**: Hashing only the source ID (`md5(id)`) leads to primary key collisions in multi-city setups. Menush generates keys using `md5(concat_ws('||', id::VARCHAR, city))`, guaranteeing zero collisions.
+1. **Composite Hashing for Surrogate Keys**: Hashing only the source ID (`md5(id)`) leads to primary key collisions in multi-city setups. The pipeline generates keys using `md5(concat_ws('||', id::VARCHAR, city))`, guaranteeing zero collisions.
 2. **Host Deduplication**: Hosts with multiple listings may have conflicting metadata. We apply `row_number() OVER (PARTITION BY host_id, city ORDER BY host_since DESC)` to select a single, representative host record, preserving dimensional integrity.
 3. **Vectorized Haversine Calculations**: Distances are calculated directly in SQL on DuckDB's vectorized execution engine using:
    ```sql
@@ -158,7 +158,7 @@ The warehouse is designed to maintain structural integrity while optimizing quer
 
 ## 4. Business Intelligence & Statistical Analysis
 
-Menush calculates the following analytics:
+This pipeline calculates the following analytics:
 1. **Market overview**: Nightly listing averages, medians, and ratings broken down by room type.
 2. **Geographical proximity gradients**: Groups listings into distance bands (`<1km`, `1-2.5km`, `2.5-5km`, `5km+`) to evaluate premiums.
 3. **ANOVA & Cohen's d**: Runs one-way ANOVA tests to determine if neighborhood pricing variances are statistically significant, calculating Cohen's d to measure the effect size between prime districts.
@@ -196,7 +196,7 @@ To trigger the pipeline from Tines:
 
 ### 6.1 Azure Blob Storage Setup
 
-Menush supports uploading cleaned Parquet data directly to Azure Blob Storage for centralized data lake storage and Power BI consumption.
+This pipeline supports uploading cleaned Parquet data directly to Azure Blob Storage for centralized data lake storage and Power BI consumption.
 
 #### Prerequisites
 - Azure Storage Account (Standard or Premium)
@@ -365,7 +365,7 @@ Occupancy_Rate = 1 - AVERAGE('fact_calendar'[available])
 
 ## 7. What to Do Next (Production Roadmap)
 
-To deploy Menush into a production-grade environment, follow this roadmap:
+To deploy this pipeline into a production-grade environment, follow this roadmap:
 
 1. **Configure Remote Storage Integration**:
    - Instead of storing raw data locally, configure `src/ingest.py` to stream files directly to an object store (e.g., AWS S3 or Google Cloud Storage).

@@ -1,6 +1,6 @@
 # Azure Blob Storage Setup Guide
 
-This guide walks you through creating an Azure Storage Account and configuring the `.env` file for the Menush pipeline.
+This guide walks you through creating an Azure Storage Account and configuring the `.env` file for this pipeline.
 
 ---
 
@@ -23,8 +23,8 @@ This guide walks you through creating an Azure Storage Account and configuring t
 | Field | Value |
 |-------|-------|
 | **Subscription** | Your Azure subscription |
-| **Resource group** | Create new (e.g., `menush-rg`) or use existing |
-| **Storage account name** | `menushstorage` (must be globally unique, lowercase, 3-24 chars) |
+| **Resource group** | Create new (e.g., `pipeline-rg`) or use existing |
+| **Storage account name** | `airbnbpipelinestorage` (must be globally unique, lowercase, 3-24 chars) |
 | **Region** | Choose closest to you (e.g., `East US`, `West Europe`) |
 | **Performance** | `Standard` (sufficient for this project) |
 | **Redundancy** | `Locally-redundant storage (LRS)` (cheapest option) |
@@ -63,7 +63,7 @@ You need the connection string to authenticate the pipeline. There are two metho
 
 It looks like this:
 ```
-DefaultEndpointsProtocol=https;AccountName=menushstorage;AccountKey=abc123XYZ...==;EndpointSuffix=core.windows.net
+DefaultEndpointsProtocol=https;AccountName=airbnbpipelinestorage;AccountKey=abc123XYZ...==;EndpointSuffix=core.windows.net
 ```
 
 ### Method B: Using Shared Access Signature (SAS) (More Secure)
@@ -92,7 +92,7 @@ DefaultEndpointsProtocol=https;AccountName=menushstorage;AccountKey=abc123XYZ...
 
    ```env
    # Azure Blob Storage Configuration
-   AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=menushstorage;AccountKey=abc123XYZ...==;EndpointSuffix=core.windows.net
+AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=airbnbpipelinestorage;AccountKey=abc123XYZ...==;EndpointSuffix=core.windows.net
    ```
 
    **Important**: Paste your actual connection string after the `=` sign. Do NOT include quotes.
@@ -147,7 +147,7 @@ If you're running in production or CI/CD (not recommended for local development)
 ### 1. Create a Service Principal in Azure
 
 ```bash
-az ad sp create-for-rbac --name "menush-pipeline-sp" --role "Storage Blob Data Contributor" --scopes "/subscriptions/YOUR_SUB_ID/resourceGroups/menush-rg/providers/Microsoft.Storage/storageAccounts/menushstorage"
+az ad sp create-for-rbac --name "pipeline-sp" --role "Storage Blob Data Contributor" --scopes "/subscriptions/YOUR_SUB_ID/resourceGroups/pipeline-rg/providers/Microsoft.Storage/storageAccounts/airbnbpipelinestorage"
 ```
 
 This outputs:
@@ -163,7 +163,7 @@ This outputs:
 
 ```env
 # Service Principal Authentication
-AZURE_STORAGE_ACCOUNT_URL=https://menushstorage.blob.core.windows.net
+AZURE_STORAGE_ACCOUNT_URL=https://airbnbpipelinestorage.blob.core.windows.net
 AZURE_TENANT_ID=def456...
 AZURE_CLIENT_ID=abc123...
 AZURE_CLIENT_SECRET=xyz789...
@@ -208,7 +208,7 @@ After uploading, connect Power BI to your Azure Blob Storage:
 
 1. Open Power BI Desktop
 2. **Get Data** → **Azure** → **Azure Blob Storage**
-3. Enter: `https://menushstorage.blob.core.windows.net`
+3. Enter: `https://airbnbpipelinestorage.blob.core.windows.net`
 4. Authenticate with your Azure account
 5. Navigate to `airbnb-cleaned-data` → `cleaned/`
 6. Select Parquet files → **Load**
