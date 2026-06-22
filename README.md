@@ -1,4 +1,4 @@
-# Menush: Industrial-Grade Airbnb ETL & Dimensional Warehousing Pipeline
+# Industrial-Grade Airbnb ETL & Dimensional Warehousing Pipeline
 **Expernetic Talent Assessment Program — Production-Grade Data Engineering Blueprint**
 
 **Author**: Menush Jagathchandra | **GitHub**: [@MenushJagathchandra](https://github.com/MenushJagathchandra)

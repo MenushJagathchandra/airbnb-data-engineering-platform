@@ -24,7 +24,7 @@ PYTHONPATH=. pytest
 ## 3. Run the Pipeline
 
 ```bash
-PYTHONPATH=. python src/main.py
+$env:PYTHONPATH="."; python src/main.py
 ```
 
 That's it! The pipeline will:
