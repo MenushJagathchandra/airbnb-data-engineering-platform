@@ -463,7 +463,7 @@ def run_analysis_pipeline(db_path: Path, output_dir: Path):
                 report_lines.append(f"No review sentiment details available for {city.title()}.\n")
 
         # Write report file
-        with open(output_dir / "analytics_report.md", "w") as f:
+        with open(output_dir / "analytics_report.md", "w", encoding="utf-8") as f:
             f.write("\n".join(report_lines))
         logger.info(f"Analytics report written to {output_dir / 'analytics_report.md'}")
 

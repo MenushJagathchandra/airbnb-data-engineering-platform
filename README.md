@@ -1,6 +1,8 @@
 # Menush: Industrial-Grade Airbnb ETL & Dimensional Warehousing Pipeline
 **Expernetic Talent Assessment Program — Production-Grade Data Engineering Blueprint**
 
+**Author**: Menush Jagathchandra | **GitHub**: [@MenushJagathchandra](https://github.com/MenushJagathchandra)
+
 Menush is a configuration-driven, event-triggered, and fully containerized data engineering pipeline. It ingests, standardizes, models, and analyzes millions of rows of Inside Airbnb data for multiple cities (currently targeting Amsterdam and Venice). It compiles the processed data into a DuckDB Star Schema Data Warehouse and runs statistical modeling (ANOVA, Cohen's d, distance gradients) and lexicon-based sentiment analysis on customer reviews.
 
 ---
@@ -190,7 +192,178 @@ To trigger the pipeline from Tines:
 
 ---
 
-## 6. What to Do Next (Production Roadmap)
+## 6. Azure Cloud Integration & Power BI Connectivity
+
+### 6.1 Azure Blob Storage Setup
+
+Menush supports uploading cleaned Parquet data directly to Azure Blob Storage for centralized data lake storage and Power BI consumption.
+
+#### Prerequisites
+- Azure Storage Account (Standard or Premium)
+- Container created in the storage account (e.g., `airbnb-cleaned-data`)
+
+#### Authentication Methods
+
+**Option A: Connection String (Development/Testing)**
+```bash
+export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=https;AccountName=...;AccountKey=...;EndpointSuffix=core.windows.net"
+```
+
+**Option B: Service Principal (Production)**
+```bash
+export AZURE_STORAGE_ACCOUNT_URL="https://<your-storage-account>.blob.core.windows.net"
+export AZURE_TENANT_ID="<your-tenant-id>"
+export AZURE_CLIENT_ID="<your-service-principal-app-id>"
+export AZURE_CLIENT_SECRET="<your-service-principal-secret>"
+```
+
+**Option C: Managed Identity (Azure VMs/AKS)**
+```bash
+export AZURE_STORAGE_ACCOUNT_URL="https://<your-storage-account>.blob.core.windows.net"
+# No additional credentials needed when running on Azure resources with managed identity enabled
+```
+
+#### Running the Pipeline with Azure Upload
+
+```bash
+# Install updated dependencies
+pip install -r requirements.txt
+
+# Run pipeline and upload cleaned data to Azure
+PYTHONPATH=. .venv/bin/python src/main.py --upload-to-azure
+
+# Also upload gold layer (DuckDB database, reports, plots)
+PYTHONPATH=. .venv/bin/python src/main.py --upload-to-azure --upload-gold
+```
+
+#### Upload Structure in Azure Blob Storage
+
+```
+airbnb-cleaned-data (container)
+├── cleaned/
+│   ├── amsterdam/
+│   │   ├── listings.parquet
+│   │   ├── calendar.parquet
+│   │   ├── reviews.parquet
+│   │   ├── listings_quarantine.parquet
+│   │   ├── calendar_quarantine.parquet
+│   │   └── reviews_quarantine.parquet
+│   └── venice/
+│       ├── listings.parquet
+│       ├── calendar.parquet
+│       ├── reviews.parquet
+│       ├── listings_quarantine.parquet
+│       ├── calendar_quarantine.parquet
+│       └── reviews_quarantine.parquet
+└── gold/ (optional, if --upload-gold is used)
+    ├── airbnb_dw.duckdb
+    ├── analytics_report.md
+    └── plots/
+```
+
+---
+
+### 6.2 Power BI Connection Guide
+
+#### Method 1: Direct Azure Blob Storage Connection (Recommended)
+
+1. **Open Power BI Desktop** → Get Data → Azure → **Azure Blob Storage**
+
+2. **Enter your storage account URL**:
+   ```
+   https://<your-storage-account>.blob.core.windows.net
+   ```
+
+3. **Authenticate**:
+   - Organizational account (recommended for Service Principal / Managed Identity)
+   - Or Account key (for connection string authentication)
+
+4. **Navigate to the container** (`airbnb-cleaned-data`) → `cleaned` folder
+
+5. **Select Parquet files**:
+   - Power BI will automatically detect the Parquet schema
+   - Select the desired files (e.g., `listings.parquet`, `calendar.parquet`, `reviews.parquet`)
+   - Click **Load** or **Transform Data** to open Power Query Editor
+
+6. **Combine Multiple City Files** (optional):
+   - In Power Query, use **Combine Files** feature
+   - Or append queries for Amsterdam and Venice datasets
+
+#### Method 2: Using Azure Data Lake Storage Gen2 (Hierarchical Namespace)
+
+If your storage account has Hierarchical Namespace enabled (ADLS Gen2):
+
+1. Use **Azure Data Lake Storage Gen2** connector in Power BI
+2. Navigate to the container and folder path
+3. Parquet files are natively supported with schema preservation
+
+#### Method 3: Download and Connect Locally
+
+If you prefer to keep data local for Power BI:
+
+```bash
+# Download cleaned data from Azure (using Azure CLI)
+az storage blob download-batch \
+  --destination ./data/cleaned \
+  --source airbnb-cleaned-data \
+  --pattern "cleaned/*/*.parquet" \
+  --account-name <your-storage-account>
+```
+
+Then connect Power BI to the local Parquet files.
+
+---
+
+### 6.3 Power BI Data Model Recommendations
+
+#### Star Schema Alignment
+
+The uploaded Parquet files align with the DuckDB Star Schema. In Power BI, you can recreate the dimensional model:
+
+| Power BI Table | Source Parquet | Role |
+|----------------|----------------|------|
+| `dim_listings` | `listings.parquet` | Dimension table |
+| `dim_hosts` | Derived from `listings.parquet` | Dimension table |
+| `dim_locations` | Derived from `listings.parquet` | Dimension table |
+| `dim_date` | Generated from calendar dates | Dimension table |
+| `fact_listings` | `listings.parquet` | Fact table |
+| `fact_calendar` | `calendar.parquet` | Fact table |
+| `fact_reviews` | `reviews.parquet` | Fact table |
+
+#### Calculated Columns / Measures
+
+```dax
+-- Distance to nearest landmark (if coordinates are loaded)
+Distance_km = 
+    var lat1 = SELECTEDVALUE('dim_listings'[latitude])
+    var lon1 = SELECTEDVALUE('dim_listings'[longitude])
+    var lat2 = 52.3791  -- Amsterdam Centraal
+    var lon2 = 4.9003
+    return
+        6371 * 2 * ASIN(
+            SQRT(
+                SIN(RADIANS(lat2 - lat1) / 2) ^ 2 +
+                COS(RADIANS(lat1)) * COS(RADIANS(lat2)) *
+                SIN(RADIANS(lon2 - lon1) / 2) ^ 2
+            )
+        )
+
+-- Average price by neighborhood
+Avg_Price_By_Neighborhood = AVERAGE('fact_listings'[price])
+
+-- Occupancy rate (from calendar)
+Occupancy_Rate = 1 - AVERAGE('fact_calendar'[available])
+```
+
+#### Scheduled Refresh
+
+1. In Power BI Service, configure **Scheduled Refresh** (e.g., daily/weekly)
+2. Use **Azure Blob Storage** as the data source
+3. Set up **Gateway** if using on-premises data sources alongside Azure
+
+---
+
+## 7. What to Do Next (Production Roadmap)
 
 To deploy Menush into a production-grade environment, follow this roadmap:
 

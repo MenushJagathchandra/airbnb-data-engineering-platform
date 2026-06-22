@@ -282,7 +282,8 @@ def main():
     add_bullet(doc, "Incremental Processing: Transition from full rebuilds to UPSERT/MERGE operations keyed on scrape_date for efficient longitudinal tracking.")
     add_bullet(doc, "Cloud Deployment: Migrate to AWS S3 + DuckDB httpfs extension for serverless, scalable data lake architecture.")
     add_bullet(doc, "Interactive Dashboard: Build a Streamlit or Dash application for stakeholder self-service exploration.")
-    add_bullet(doc, "Additional Cities: Scale to 5+ cities to validate cross-market pattern generalization.")
+    add_bullet(doc, "Additional Cities: Scale to 5+ cities (Barcelona, Paris, Rome, Lisbon, Berlin) to validate cross-market pattern generalization and create a pan-European short-term rental benchmark.")
+    add_bullet(doc, "AI Chatbot for Natural Language Querying: Develop a conversational interface allowing non-technical users to ask questions like 'What is the average price of entire homes near Dam Square in June?' The chatbot would parse natural language, generate parameterized DuckDB SQL queries, and return results with auto-generated visualizations. This would democratize data access without requiring Power BI or SQL knowledge.")
 
     # 15. REFLECTION
     add_heading(doc, "15. Reflection", 1)

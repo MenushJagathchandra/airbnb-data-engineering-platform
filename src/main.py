@@ -7,6 +7,7 @@ from src.ingest import ingest_all
 from src.clean import clean_all
 from src.model import build_star_schema
 from src.analyze import run_analysis_pipeline
+from src.azure_upload import upload_cleaned_data
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -16,6 +17,8 @@ def main():
     parser.add_argument("--mock", action="store_true", help="Run with mock data (offline mode / testing).")
     parser.add_argument("--db-path", type=str, default=str(GOLD_DATA_DIR / "airbnb_dw.duckdb"), help="Path to the DuckDB database file.")
     parser.add_argument("--out-dir", type=str, default=str(GOLD_DATA_DIR), help="Output directory for reports and plots.")
+    parser.add_argument("--upload-to-azure", action="store_true", help="Upload cleaned data to Azure Blob Storage after pipeline completion.")
+    parser.add_argument("--upload-gold", action="store_true", help="Also upload gold layer (DuckDB DB, reports) to Azure (requires --upload-to-azure).")
     
     args = parser.parse_args()
     
@@ -43,6 +46,15 @@ def main():
     logger.info("STEP 4: Statistical Analysis, AI Sentiment, and Reporting...")
     out_dir = Path(args.out_dir)
     run_analysis_pipeline(db_path, out_dir)
+    
+    # 5. Optional Azure Upload
+    if args.upload_to_azure:
+        logger.info("STEP 5: Uploading Cleaned Data to Azure Blob Storage...")
+        upload_summary = upload_cleaned_data(upload_gold=args.upload_gold)
+        if "error" in upload_summary:
+            logger.error("Azure upload failed. Pipeline completed but data was not uploaded.")
+        else:
+            logger.info(f"Azure upload completed: {upload_summary['uploaded']} files uploaded.")
     
     logger.info("=========================================")
     logger.info("Pipeline Execution Completed Successfully!")

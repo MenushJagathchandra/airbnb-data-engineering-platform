@@ -4,6 +4,8 @@ on:
   repository_dispatch:
     types: [trigger_pipeline]
   workflow_dispatch:  # Supports manual trigger via GitHub UI
+  schedule:
+    - cron: '0 0 * * 6'  # Runs every Saturday at midnight UTC
 
 jobs:
   run-pipeline:
@@ -33,8 +35,9 @@ jobs:
       - name: Execute Ingestion, Modeling & Analytics
         env:
           PYTHONPATH: .
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
-          python src/main.py
+          python src/main.py --upload-to-azure --upload-gold
 
       - name: Archive Production Database and Analytical Assets
         uses: actions/upload-artifact@v3
